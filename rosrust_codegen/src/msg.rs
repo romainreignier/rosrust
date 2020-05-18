@@ -1198,4 +1198,85 @@ mod tests {
         assert!(dependencies.contains(&MessagePath::new("geometry_msgs", "Quaternion")));
         assert!(dependencies.contains(&MessagePath::new("std_msgs", "Header")));
     }
+
+    #[test]
+    fn parse_variant_msgs_test() {
+        let data = Msg::new(
+            "variant_msgs/Test".try_into().unwrap(),
+            include_str!("msg_examples/variant_msgs/msg/Test.msg"),
+        )
+        .unwrap();
+        assert_eq!(data.path.package, "variant_msgs");
+        assert_eq!(data.path.name, "Test");
+        assert_eq!(
+            data.fields,
+            vec![
+                FieldInfo {
+                    datatype: DataType::RemoteStruct(MessagePath::new("std_msgs", "Header")),
+                    name: "header".into(),
+                    case: FieldCase::Unit,
+                },
+                FieldInfo {
+                    datatype: DataType::U8(true),
+                    name: "byte_constant".into(),
+                    case: FieldCase::Const("42".to_string()),
+                },
+                FieldInfo {
+                    datatype: DataType::I32,
+                    name: "builtin_int".into(),
+                    case: FieldCase::Unit,
+                },
+                FieldInfo {
+                    datatype: DataType::Bool,
+                    name: "builtin_boolean".into(),
+                    case: FieldCase::Unit,
+                },
+                FieldInfo {
+                    datatype: DataType::RemoteStruct(MessagePath::new("std_msgs", "Bool")),
+                    name: "boolean".into(),
+                    case: FieldCase::Unit,
+                },
+                FieldInfo {
+                    datatype: DataType::String,
+                    name: "builtin_string".into(),
+                    case: FieldCase::Unit,
+                },
+                FieldInfo {
+                    datatype: DataType::RemoteStruct(MessagePath::new("std_msgs", "String")),
+                    name: "string".into(),
+                    case: FieldCase::Unit,
+                },
+                FieldInfo {
+                    datatype: DataType::I32,
+                    name: "builtin_int_array".into(),
+                    case: FieldCase::Array(3),
+                },
+                FieldInfo {
+                    datatype: DataType::I32,
+                    name: "builtin_int_vector".into(),
+                    case: FieldCase::Vector,
+                },
+                FieldInfo {
+                    datatype: DataType::RemoteStruct(MessagePath::new("std_msgs", "String")),
+                    name: "string_array".into(),
+                    case: FieldCase::Array(3),
+                },
+                FieldInfo {
+                    datatype: DataType::RemoteStruct(MessagePath::new("std_msgs", "String")),
+                    name: "string_vector".into(),
+                    case: FieldCase::Vector,
+                },
+                FieldInfo {
+                    datatype: DataType::Bool,
+                    name: "builtin_boolean_array".into(),
+                    case: FieldCase::Array(3),
+                },
+            ]
+        );
+        let dependencies = get_dependency_set(&data);
+        assert_eq!(dependencies.len(), 3);
+        assert!(dependencies.contains(&MessagePath::new("std_msgs", "Header")));
+        assert!(dependencies.contains(&MessagePath::new("std_msgs", "Bool")));
+        assert!(dependencies.contains(&MessagePath::new("std_msgs", "String")));
+    }
 }
