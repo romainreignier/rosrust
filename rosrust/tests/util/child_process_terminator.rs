@@ -1,5 +1,3 @@
-use nix::sys::signal::{kill, Signal};
-use nix::unistd::Pid;
 use std::process::{Child, Command, Stdio};
 
 #[must_use]
@@ -44,7 +42,6 @@ impl ChildProcessTerminator {
 
 impl Drop for ChildProcessTerminator {
     fn drop(&mut self) {
-        let pid = Pid::from_raw(self.0.id() as i32);
-        kill(pid, Signal::SIGINT).unwrap();
+        self.0.kill().unwrap();
     }
 }
